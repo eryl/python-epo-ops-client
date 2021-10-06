@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 def _prepare_part(part):
-    return u"({0})".format(quote(part))
+    return u"{0}".format(quote(part))
 
 
 class BaseInput(object):
@@ -25,10 +25,17 @@ class BaseInput(object):
         self.date = validate_date(date)
 
     def as_api_input(self):
-        parts = filter(
-            None, [self.country_code, self.number, self.kind_code, self.date]
-        )
-        return u".".join(map(_prepare_part, parts))
+        api_input = self.number
+        if self.country_code is not None:
+            api_input = self.country_code + api_input
+
+        if self.kind_code is not None:
+            api_input = api_input + '.' + self.kind_code
+
+        if self.date is not None and self.date:
+            api_input = api_input + '.' + self.date
+
+        return api_input
 
 
 class Original(BaseInput):
