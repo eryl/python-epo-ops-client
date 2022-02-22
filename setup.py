@@ -3,12 +3,15 @@
 
 import os
 import sys
+print(sys.path)
 from codecs import open
 from os import path
 
+
 from setuptools import setup
 
-from __version__ import __version__
+#from __version__ import __version__
+__version__ = '0.1'
 
 if sys.argv[-1] == "publish":
     os.system("python setup.py sdist upload")
