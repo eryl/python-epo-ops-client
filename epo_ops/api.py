@@ -2,6 +2,8 @@
 import logging
 from base64 import b64encode
 from xml.etree import ElementTree as ET
+import re
+import time
 
 import requests
 from requests.exceptions import HTTPError
@@ -175,6 +177,15 @@ class Client(object):
         response = self._check_for_expired_token(response)
         response = self._check_for_exceeded_quota(response)
         response.raise_for_status()
+        
+        throttling_control = response.headers['x-throttling-control']
+        m = re.search(r'search=(\w+):(\d+)', throttling_control)
+        if m is not None:
+            status, n_requests = m.groups()
+            if status != 'green':
+                print("Self-throttling")
+                time.sleep(120)
+    
         return response
 
     # info: {
